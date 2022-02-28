@@ -23,45 +23,13 @@ class Feed:
         self.id = html_data.attrs.get("data-id", None)
         self.extra = html_data.find("a", {"data-id": self.id, "class": "comment-link"}).attrs.get("href", None)
 
-    @property
-    def video(self):
-        main_video = self.html.attrs.get("data-twitpic", None)
-        if main_video and "video" in main_video:
-            return main_video
-
-        find_video = self.html.find("blockquote", {"class": "twitter-video"})
-        if not find_video:
-            return None
-        return find_video.find("a").attrs.get("href", None)
-
-    @property
-    def image(self):
-        find_img = self.html.find("div", {"class": "img"})
-        if not find_img:
-            return None
-        try:
-            return find_img.find("img").attrs.get("src", None)
-        except AttributeError:
-            return None
-
-
 class Article:
     def __init__(self, feed: Feed, html_data):
         self.html = html_data
         self.feed = feed
-
-        self.image = feed.image
         self.info = feed.info
         self.id = feed.id
         self.extra = feed.extra
-        self.video = feed.video
-
-    @property
-    def source(self):
-        html = self.html.find("a", {"class": "source-link"})
-        if not html:
-            return None
-        return html.attrs.get("href", None)
 
 
 def read_json(key: str = None, default=None):
